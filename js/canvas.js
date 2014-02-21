@@ -90,7 +90,7 @@ var Scene = function (id) {
 
 	this.draw = function () {
 		window.requestAnimationFrame(that.draw);
-		that.drawCallback.apply(that);
+		that.drawCallback.apply();
 		that.logDraw();
 	};
 

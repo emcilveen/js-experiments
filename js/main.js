@@ -11,42 +11,51 @@ EM_utility.ready(function () {
 	// GESTURES
 	//
 
-	var gestureTracker = (function () {
-		var x = 0;
-		var y = 0;
-		var prevX = 0;
-		var prevY = 0;
-		var vx = 0;
-		var vy = 0;
-		var prevVx = 0;
-		var prevVy = 0;
-		var ax = 0;
-		var ay = 0;
-		var heading = 0;
-		var prevHeading = 0;
-		var vHeading = 0;
-		var prevVHeading = 0;
-		var aHeading = 0;
+	var GestureTracker = function (scene) {
+		this.scene = scene;
+		this.x = 0;
+		this.y = 0;
+		this.prevX = 0;
+		this.prevY = 0;
+		this.vx = 0;
+		this.vy = 0;
+		this.prevVx = 0;
+		this.prevVy = 0;
+		this.ax = 0;
+		this.ay = 0;
+		this.heading = 0;
+		this.prevHeading = 0;
+		this.vHeading = 0;
+		this.prevVHeading = 0;
+		this.aHeading = 0;
 
-		var myUpdate = function (scene) {
-			prevX = x;
-			prevY = y;
-			x = scene.mouseX;
-			y = scene.mouseY;
-			prevVx = vx;
-			prevVy = vy;
-			vx = x - prevX;
-			vy = y - prevY;
-			prevAx = ax;
-			prevAy = ay;
-			ax = vx - prevVx;
-			ay = vy - prevVy;
+		this.update = function () {
+			this.prevX = this.x;
+			this.prevY = this.y;
+			this.x = this.scene.mouseX;
+			this.y = this.scene.mouseY;
+			this.prevVx = this.vx;
+			this.prevVy = this.vy;
+			this.vx = this.x - this.prevX;
+			this.vy = this.y - this.prevY;
+			this.ax = this.vx - this.prevVx;
+			this.ay = this.vy - this.prevVy;
+
+			this.prevHeading = this.heading;
+			this.heading = Math.atan2(this.vy, this.vx);
+			this.prevVHeading = this.vHeading;
+			this.vHeading = this.heading - this.prevHeading;
+			if (this.vHeading > Math.PI) { this.vHeading -= Math.TWO_PI; }
+			else if (this.vHeading < -Math.PI) { this.vHeading += Math.TWO_PI; }
+			this.aHeading = this.vHeading - this.prevVHeading;
+			if (this.aHeading > Math.PI) { this.aHeading -= Math.TWO_PI; }
+			else if (this.aHeading < -Math.PI) { this.aHeading += Math.TWO_PI; }
+
+			if (this.vHeading > 0.5 || this.vHeading < -0.5) {
+				console.log('whee! ' + this.vHeading);
+			}
 		};
-
-		return {
-			update: myUpdate
-		}
-	} ());
+	};
 
 
 
@@ -66,10 +75,11 @@ EM_utility.ready(function () {
 
 	var update = function () {
 		// console.log(this);
-		gestureTracker.update(this);
+		myGestureTracker.update(this);
 	}
 
 	var myScene = new Scene('canvas');
+	var myGestureTracker = new GestureTracker(myScene);
 	// myScene.startLogging();
 	myScene.startAnimating(update);
 });
