@@ -133,6 +133,7 @@ EM_utility.ready(function () {
 		mySpinner[i] = new Spinner(myScene);
 	}
 
+	myScene.initMouse();
 	myScene.startLogging();
 	myScene.startAnimating(update);
 

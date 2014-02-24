@@ -72,6 +72,9 @@ var Scene = function (id) {
 
 	this.drawCallback = function () {};
 
+
+	// LOGGING
+
 	this.logActive = false;
 	this.logText = [];
 	this.logMaxEntries = 10;
@@ -82,32 +85,10 @@ var Scene = function (id) {
 	this.logFont = '20px serif';
 	this.logBaseline = 'bottom';
 
-	this.logDraw = function () {
-		if (this.logActive) {
-			this.context.fillStyle = this.logColor;
-			this.context.font = this.logFont;
-			this.context.textBaseline = this.logBaseline;
-			for (var i=0; i<this.logText.length; i++) {
-				this.context.fillText(this.logText[i], this.logLeft, this.logTop + this.logLineHeight*i);
-			}
-		}
-	};
 
-	this.draw = function () {
-		window.requestAnimationFrame(self.draw);
-		self.context.fillStyle = self.bgColor;
-		self.context.fillRect(0, 0, self.pixelWidth, self.pixelHeight);
-		self.drawCallback.apply();
-		self.logDraw();
-	};
-
-
-	//
 	// MOUSE
-	//
 
 	this.mouseX = 0, this.mouseY = 0;
-
 	this.click = {
 		primary: false,
 		secondary: false,
@@ -144,51 +125,79 @@ var Scene = function (id) {
 		self.mouseY = self.scaleFactor * (e.pageY - self.canvasTop);
 	};
 
-	this.initMouse = function () {
-		window.addEventListener('mousedown', this.handleMouseDown, false);
-		window.addEventListener('mousemove', this.handleMouseMove, false);
-		window.addEventListener('mouseup', this.handleMouseUp, false);
-		window.addEventListener('contextmenu', function (e) {
-			e.preventDefault(); return false;
-		}, false);
-		window.addEventListener('mousewheel', function (e) {
-			e.preventDefault(); return false;
-		}, false);
+
+	// DRAW LOOP
+
+	this.draw = function () {
+		window.requestAnimationFrame(self.draw);
+		self.context.fillStyle = self.bgColor;
+		self.context.fillRect(0, 0, self.pixelWidth, self.pixelHeight);
+		self.drawCallback.apply();
+		self.logDraw();
 	};
+}
 
 
 
-	// PUBLIC METHODS
+//
+// MOUSE
+//
 
-	// Write debugging log to canvas -- call from animation draw loop.
-	this.log = function () {
-		var text = '';
-
-		for (var i=0; i<arguments.length; i++) {
-			text += arguments[i].toString() + ' ';
-		}
-		this.logText.push(text);
-		if (this.logText.length > this.logMaxEntries) {
-			this.logText.shift();
-		}
-	};
-
-	this.startLogging = function () {
-		this.logActive = true;
-	};
-
-	this.stopLogging = function () {
-		this.logActive = false;
-	};
-
-	this.startAnimating = function (callback) {
-		this.drawCallback = callback;
-		this.draw();
-	};
-
-	this.stopAnimating = function () {
-		this.animating = false;
-	};
-
-	this.initMouse();
+Scene.prototype.initMouse = function () {
+	window.addEventListener('mousedown', this.handleMouseDown, false);
+	window.addEventListener('mousemove', this.handleMouseMove, false);
+	window.addEventListener('mouseup', this.handleMouseUp, false);
+	window.addEventListener('contextmenu', function (e) {
+		e.preventDefault(); return false;
+	}, false);
+	window.addEventListener('mousewheel', function (e) {
+		e.preventDefault(); return false;
+	}, false);
 };
+
+
+//
+// LOGGING
+//
+
+// Write debugging log to canvas -- call from animation draw loop.
+Scene.prototype.logDraw = function () {
+	if (this.logActive) {
+		this.context.fillStyle = this.logColor;
+		this.context.font = this.logFont;
+		this.context.textBaseline = this.logBaseline;
+		for (var i=0; i<this.logText.length; i++) {
+			this.context.fillText(this.logText[i], this.logLeft, this.logTop + this.logLineHeight*i);
+		}
+	}
+};
+
+Scene.prototype.log = function () {
+	var text = '';
+
+	for (var i=0; i<arguments.length; i++) {
+		text += arguments[i].toString() + ' ';
+	}
+	this.logText.push(text);
+	if (this.logText.length > this.logMaxEntries) {
+		this.logText.shift();
+	}
+};
+
+Scene.prototype.startLogging = function () {
+	this.logActive = true;
+};
+
+Scene.prototype.stopLogging = function () {
+	this.logActive = false;
+};
+
+Scene.prototype.startAnimating = function (callback) {
+	this.drawCallback = callback;
+	this.draw();
+};
+
+Scene.prototype.stopAnimating = function () {
+	this.animating = false;
+};
+
