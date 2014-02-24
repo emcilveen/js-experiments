@@ -8,6 +8,45 @@ EM_utility.ready(function () {
 	var mySpinner = [];
 	var spinnerFill = '#789';
 
+	var Spinner = function (scene) {
+		var color = EM_utility.hexToRgb(spinnerFill);
+		color.r += Math.random() * 80 - 40;
+		color.g += Math.random() * 20 - 10;
+		color.b += Math.random() * 40 - 20;
+
+		this.scene = scene;
+		this.x = scene.pixelWidth * Math.random();
+		this.y = scene.pixelHeight * Math.random();
+		this.rotation = Math.TWO_PI * Math.random();
+		this.rotationSpeed = Math.random() * 0.04 - 0.02;
+		this.innerRadius = 10 + 20 * Math.random();
+		this.outerRadius = 30 + 40 * Math.random();
+		this.fill = EM_utility.rgbToHex(color);
+	}
+
+	Spinner.prototype.draw = function () {
+		this.rotation += this.rotationSpeed;
+		ctx = this.scene.context;
+		ctx.fillStyle = this.fill;
+
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		ctx.rotate(this.rotation);
+		ctx.beginPath();
+		ctx.moveTo(this.innerRadius, 0);
+		for (var i=0; i<4; i++) {
+			ctx.rotate(Math.PI/5);
+			ctx.lineTo(this.outerRadius, 0);
+			ctx.rotate(Math.PI/5);
+			ctx.lineTo(this.innerRadius, 0);
+		}
+		ctx.rotate(Math.PI/5);
+		ctx.lineTo(this.outerRadius, 0);
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
+	}
+
 
 	//
 	// GESTURES
@@ -71,49 +110,8 @@ EM_utility.ready(function () {
 
 
 	//
+	// MAIN LOOP
 	//
-	//
-
-	var Spinner = function (scene) {
-		var color = EM_utility.hexToRgb(spinnerFill);
-		color.r += Math.random() * 80 - 40;
-		color.g += Math.random() * 20 - 10;
-		color.b += Math.random() * 40 - 20;
-
-		this.scene = scene;
-		this.x = scene.pixelWidth * Math.random();
-		this.y = scene.pixelHeight * Math.random();
-		this.rotation = Math.TWO_PI * Math.random();
-		this.rotationSpeed = Math.random() * 0.04 - 0.02;
-		this.innerRadius = 10 + 20 * Math.random();
-		this.outerRadius = 30 + 40 * Math.random();
-		this.fill = EM_utility.rgbToHex(color);
-	}
-
-	Spinner.prototype.draw = function () {
-		this.rotation += this.rotationSpeed;
-		ctx = this.scene.context;
-		ctx.fillStyle = this.fill;
-
-		ctx.save();
-		ctx.translate(this.x, this.y);
-		ctx.rotate(this.rotation);
-		ctx.beginPath();
-		ctx.moveTo(this.innerRadius, 0);
-		for (var i=0; i<4; i++) {
-			ctx.rotate(Math.PI/5);
-			ctx.lineTo(this.outerRadius, 0);
-			ctx.rotate(Math.PI/5);
-			ctx.lineTo(this.innerRadius, 0);
-		}
-		ctx.rotate(Math.PI/5);
-		ctx.lineTo(this.outerRadius, 0);
-		ctx.closePath();
-		ctx.fill();
-		ctx.restore();
-	}
-
-
 
 	var update = function () {
 		myGestureTracker.update();
@@ -122,6 +120,12 @@ EM_utility.ready(function () {
 			mySpinner[i].draw();
 		}
 	}
+
+
+
+	//
+	// INIT
+	//
 
 	var myScene = new Scene('canvas');
 	var myGestureTracker = new GestureTracker(myScene);
