@@ -60,13 +60,15 @@ var Scene = function (id) {
 	this.pixelHeight = this.screenHeight * this.scaleFactor;
 	this.centerX = this.pixelWidth / 2;
 	this.centerY = this.pixelHeight / 2;
-	
-	this.canvas.width = this.pixelHeight;
+
+	this.canvas.width = this.pixelWidth;
 	this.canvas.height = this.pixelHeight;
 	this.canvas.style.width = this.screenWidth + 'px';
 	this.canvas.style.height = this.screenHeight + 'px';
 
 	this.context = this.canvas.getContext('2d');
+
+	this.bgColor = '#123';
 
 	this.drawCallback = function () {};
 
@@ -76,12 +78,12 @@ var Scene = function (id) {
 	this.logLeft = 10;
 	this.logTop = 30;
 	this.logLineHeight = 30;
-	this.logColor = '#333';
+	this.logColor = '#888';
 	this.logFont = '20px serif';
 	this.logBaseline = 'bottom';
 
 	this.logDraw = function () {
-		if (this.logActive) {	
+		if (this.logActive) {
 			this.context.fillStyle = this.logColor;
 			this.context.font = this.logFont;
 			this.context.textBaseline = this.logBaseline;
@@ -93,6 +95,8 @@ var Scene = function (id) {
 
 	this.draw = function () {
 		window.requestAnimationFrame(self.draw);
+		self.context.fillStyle = self.bgColor;
+		self.context.fillRect(0, 0, self.pixelWidth, self.pixelHeight);
 		self.drawCallback.apply();
 		self.logDraw();
 	};
@@ -152,20 +156,17 @@ var Scene = function (id) {
 		}, false);
 	};
 
-	// canvas: this.canvas,
-	// context: context,
-	// width: myPixelWidth,
-	// height: myPixelHeight,
-	// centerX: myCenterX,
-	// centerY: myCenterY,
-	// mouseX: myMouseX,
-	// mouseY: myMouseY,
 
 
 	// PUBLIC METHODS
 
 	// Write debugging log to canvas -- call from animation draw loop.
-	this.log = function (text) {
+	this.log = function () {
+		var text = '';
+
+		for (var i=0; i<arguments.length; i++) {
+			text += arguments[i].toString() + ' ';
+		}
 		this.logText.push(text);
 		if (this.logText.length > this.logMaxEntries) {
 			this.logText.shift();

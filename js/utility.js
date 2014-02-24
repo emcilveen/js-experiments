@@ -55,6 +55,8 @@ var EM_utility = (function () {
 		},
 
 		hexToRgb: function (string) {
+			var string = string.replace('#', '');
+
 			var r=0, g=0, b=0;
 
 			if (string.length === 3) {
@@ -74,13 +76,16 @@ var EM_utility = (function () {
 		},
 
 		rgbToHex: function (color) {
-			return ("0"+color.r.toString(16)).slice(-2) + ("0"+color.g.toString(16)).slice(-2) + ("0"+color.b.toString(16)).slice(-2);
+			var r = Math.max(0, Math.min(255, Math.floor(color.r)));
+			var g = Math.max(0, Math.min(255, Math.floor(color.g)));
+			var b = Math.max(0, Math.min(255, Math.floor(color.b)));
+			return ("0"+r.toString(16)).slice(-2) + ("0"+g.toString(16)).slice(-2) + ("0"+b.toString(16)).slice(-2);
 		},
 
-		sample: function (a, b, c, d, e) {
+		sample: function () {
 			sampleCount --;
 			if (sampleCount <= 0) {
-				console.log(a, b, c, d, e);
+				console.log(arguments);
 				sampleCount = sampleInterval;
 			}
 		}
