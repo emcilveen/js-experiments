@@ -22,6 +22,7 @@ EM_utility.ready(function () {
 		this.innerRadius = 10 + 20 * Math.random();
 		this.outerRadius = 30 + 40 * Math.random();
 		this.fill = EM_utility.rgbToHex(color);
+		this.following = -1;
 	}
 
 	Spinner.prototype.draw = function () {
@@ -114,9 +115,18 @@ EM_utility.ready(function () {
 	//
 
 	var update = function () {
+		var mouse = 0;
+
 		myGestureTracker.update();
 
 		for (var i=0; i<numSpinners; i++) {
+			if (mySpinner[i].following == mouse) {
+				mySpinner[i].rotationSpeed *= 0.9;
+				mySpinner[i].rotationSpeed += 0.1 * myGestureTracker.vHeadingSmoothed;
+			}
+			if (Math.random() < 0.01) {
+				mySpinner[i].following = -1 - mySpinner[i].following;
+			}
 			mySpinner[i].draw();
 		}
 	}
@@ -134,6 +144,7 @@ EM_utility.ready(function () {
 	}
 
 	myScene.initMouse();
+	myScene.initTouch();
 	myScene.startLogging();
 	myScene.startAnimating(update);
 

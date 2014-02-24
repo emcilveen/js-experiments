@@ -126,6 +126,73 @@ var Scene = function (id) {
 	};
 
 
+	// TOUCH
+	// See https://developer.mozilla.org/en-US/docs/DOM/Touch_events#Example
+
+	this.trackingTouches = [];
+	this.touchCount = 0;
+
+	this.getCurrentTouchIndex = function (idToFind) {
+		for (var i=0; i<self.trackingTouches.length; i++) {
+			var id = self.trackingTouches[i].identifier;
+			if (id === idToFind) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	this.handleTouchStart = function (e) {
+		e.preventDefault();
+		var touches = e.changedTouches;
+		var sumX=0, sumY=0;
+		var count = 0;
+
+		if (self.trackingTouches.length === 0) {
+			for (var i=0; i<touches.length; i++) {
+				sumX += touches[i].pageX;
+				sumY += touches[i].pageY;
+				self.trackingTouches.push(touches[i]);
+				count++;
+			}
+			self.mouseX = self.scaleFactor * sumX / count - self.canvasLeft;
+			self.mouseY = self.scaleFactor * sumY / count - self.canvasTop;
+		}
+		self.touchCount = e.touches.length;
+	}
+
+	this.handleTouchMove = function (e) {
+		e.preventDefault();
+		var touches = e.touches;
+		var sumX=0, sumY=0;
+		var count = 0;
+
+		for (var i=0; i<touches.length; i++) {
+			var index = getCurrentTouchIndex(touches[i].identifier);
+			if (index >= 0) {
+				sumX += touches[index].pageX - self.canvasLeft;
+				sumY += touches[index].pageY;
+				count++;
+			}
+		}
+		if (count > 0) {
+			self.mouseX = self.scaleFactor * sumX / count - self.canvasLeft;
+			self.mouseY = self.scaleFactor * sumY / count - self.canvasTop;
+		}
+		self.touchCount = e.touches.length;
+	}
+
+	this.handleTouchEnd = function (e) {
+		e.preventDefault();
+		var touches = e.changedTouches;
+		for (var i=0; i<touches.length; i++) {
+			var index = getCurrentTouchIndex(touches[i].identifier);
+			self.trackingTouches.splice(index, 1);
+		}
+		self.touchCount = e.touches.length;
+	}
+
+
 	// DRAW LOOP
 
 	this.draw = function () {
@@ -154,6 +221,14 @@ Scene.prototype.initMouse = function () {
 		e.preventDefault(); return false;
 	}, false);
 };
+
+Scene.prototype.initTouch = function () {
+	window.addEventListener('touchstart', this.handleTouchStart, false);
+	window.addEventListener('touchmove', this.handleTouchMove, false);
+	window.addEventListener('touchend', this.handleTouchEnd, false);
+	window.addEventListener('touchcancel', this.handleTouchEnd, false);
+}
+
 
 
 //
