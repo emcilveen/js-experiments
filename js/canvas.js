@@ -32,7 +32,7 @@
 
 
 var Scene = function (id) {
-	var that = this;
+	var self = this;
 
 	this.id = id;
 	this.canvas = document.getElementById(id);
@@ -50,8 +50,7 @@ var Scene = function (id) {
 
 	this.screenWidth = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
 	this.screenHeight = window.innerHeight|| document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-	this.canvas.style.width = this.screenWidth + 'px';
-	this.canvas.style.height = this.screenHeight + 'px';
+
 
 	this.scaleFactor = 1;
 	if (('devicePixelRatio' in window) && (window.devicePixelRatio > 1)) {
@@ -61,9 +60,13 @@ var Scene = function (id) {
 	this.pixelHeight = this.screenHeight * this.scaleFactor;
 	this.centerX = this.pixelWidth / 2;
 	this.centerY = this.pixelHeight / 2;
+	
+	this.canvas.width = this.pixelHeight;
+	this.canvas.height = this.pixelHeight;
+	this.canvas.style.width = this.screenWidth + 'px';
+	this.canvas.style.height = this.screenHeight + 'px';
 
-	console.log(this);
-
+	this.context = this.canvas.getContext('2d');
 
 	this.drawCallback = function () {};
 
@@ -89,9 +92,9 @@ var Scene = function (id) {
 	};
 
 	this.draw = function () {
-		window.requestAnimationFrame(that.draw);
-		that.drawCallback.apply();
-		that.logDraw();
+		window.requestAnimationFrame(self.draw);
+		self.drawCallback.apply();
+		self.logDraw();
 	};
 
 
@@ -112,29 +115,29 @@ var Scene = function (id) {
 	this.handleMouseDown = function (e) {
 		e.preventDefault();
 		if (e.which > 1) {
-			that.click.secondary = true;
+			self.click.secondary = true;
 		} else {
-			that.click.primary = true;
+			self.click.primary = true;
 		}
-		that.mouseX = that.scaleFactor * (e.pageX - that.canvasLeft);
-		that.mouseY = that.scaleFactor * (e.pageY - that.canvasTop);
+		self.mouseX = self.scaleFactor * (e.pageX - self.canvasLeft);
+		self.mouseY = self.scaleFactor * (e.pageY - self.canvasTop);
 	};
 
 	this.handleMouseMove = function (e) {
 		e.preventDefault();
-		that.mouseX = that.scaleFactor * (e.pageX - that.canvasLeft);
-		that.mouseY = that.scaleFactor * (e.pageY - that.canvasTop);
+		self.mouseX = self.scaleFactor * (e.pageX - self.canvasLeft);
+		self.mouseY = self.scaleFactor * (e.pageY - self.canvasTop);
 	};
 
 	this.handleMouseUp = function (e) {
 		e.preventDefault();
 		if (e.which > 1) {
-			that.click.secondary = false;
+			self.click.secondary = false;
 		} else {
-			that.click.primary = false;
+			self.click.primary = false;
 		}
-		that.mouseX = that.scaleFactor * (e.pageX - that.canvasLeft);
-		that.mouseY = that.scaleFactor * (e.pageY - that.canvasTop);
+		self.mouseX = self.scaleFactor * (e.pageX - self.canvasLeft);
+		self.mouseY = self.scaleFactor * (e.pageY - self.canvasTop);
 	};
 
 	this.initMouse = function () {
