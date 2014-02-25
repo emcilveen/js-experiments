@@ -18,21 +18,14 @@
             <script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
         <![endif]-->
     </head>
-    <body>
+    <body id="body">
 
         <section>
-            <div class="canvas-container">
-                <canvas id="canvas">
-                 This text is displayed if your browser
-                 does not support HTML5 Canvas.
-                </canvas>
+            <div id="canvas-container" class="canvas-container">
+                <canvas id="canvas"></canvas>
                 <!-- <h1 id="prompt">click, touch<br> or use cursor keys</h1> -->
             </div>
         </section>
-<!--
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
--->
         <script src="js/utility.js"></script>
         <script src="js/canvas.js"></script>
         <script src="js/pointer.js"></script>

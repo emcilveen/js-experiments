@@ -27,10 +27,6 @@ var Pointer = function (scene) {
 };
 
 Pointer.prototype.update = function () {
-	this.prevX = this.x;
-	this.prevY = this.y;
-	this.prevVx = this.vx;
-	this.prevVy = this.vy;
 	this.vx = this.x - this.prevX;
 	this.vy = this.y - this.prevY;
 	this.speed = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
@@ -38,9 +34,7 @@ Pointer.prototype.update = function () {
 	this.ay = this.vy - this.prevVy;
 	this.accel = Math.sqrt(this.ax*this.ax + this.ay*this.ay);
 
-	this.prevHeading = this.heading;
 	this.heading = Math.atan2(this.vy, this.vx);
-	this.prevVHeading = this.vHeading;
 	this.vHeading = this.heading - this.prevHeading;
 	if (this.vHeading > Math.PI) { this.vHeading -= Math.TWO_PI; }
 	else if (this.vHeading < -Math.PI) { this.vHeading += Math.TWO_PI; }
@@ -55,6 +49,13 @@ Pointer.prototype.update = function () {
 	else if (this.aHeading < -Math.PI) { this.aHeading += Math.TWO_PI; }
 
 	this.radius = this.speed / this.vHeading;
+
+	this.prevX = this.x;
+	this.prevY = this.y;
+	this.prevVx = this.vx;
+	this.prevVy = this.vy;
+	this.prevHeading = this.heading;
+	this.prevVHeading = this.vHeading;
 };
 
 
@@ -80,7 +81,6 @@ var GestureTracker = function (scene) {
 		if (self.pointer[0].active) {
 			self.pointer[0].x = self.scene.scaleFactor * (e.pageX - self.scene.canvasLeft);
 			self.pointer[0].y = self.scene.scaleFactor * (e.pageY - self.scene.canvasTop);
-// console.log(self.pointer[0]);
 		}
 	};
 
@@ -96,9 +96,8 @@ var GestureTracker = function (scene) {
 	// See https://developer.mozilla.org/en-US/docs/DOM/Touch_events#Example
 
 	this.getCurrentTouchIndex = function (idToFind) {
-		for (var i=0; i<self.pointer.length; i++) {
-			var id = self.pointer[i].identifier;
-			if (id === idToFind) {
+		for (var i=1; i<self.pointer.length; i++) {
+			if (self.pointer[i].identifier === idToFind) {
 				return i;
 			}
 		}
@@ -108,48 +107,43 @@ var GestureTracker = function (scene) {
 	this.handleTouchStart = function (e) {
 		e.preventDefault();
 		var touches = e.changedTouches;
-		var sumX=0, sumY=0;
-		var count = 0;
-self.log(self.pointer, self.pointerCount);
+		var newPointer;
 
-		if (self.pointer.length === 0) {
-			for (var i=0; i<touches.length; i++) {
-				sumX += touches[i].pageX;
-				sumY += touches[i].pageY;
-				self.pointer.push(touches[i]);
-				count++;
-			}
-			self.mouseX = self.scene.scaleFactor * sumX / count - self.canvasLeft;
-			self.mouseY = self.scene.scaleFactor * sumY / count - self.canvasTop;
+		for (var i=0; i<touches.length; i++) {
+			newPointer = new Pointer(self.scene);
+			newPointer.identifier = touches[i].identifier;
+			newPointer.active = true;
+			newPointer.x = self.scene.scaleFactor * (touches[i].pageX - self.scene.canvasLeft);
+			newPointer.y = self.scene.scaleFactor * (touches[i].pageY - self.scene.canvasTop);
+			self.pointer.push(newPointer);
 		}
-		self.pointerCount = e.touches.length;
 	}
 
 	this.handleTouchMove = function (e) {
 		e.preventDefault();
-		var sumX=0, sumY=0;
-		var count = 0;
+		var touches = e.touches;
+		var index;
 
-		for (var i=0; i<e.touches.length; i++) {
-			var index = getCurrentTouchIndex(e.touches[i].identifier);
+		for (var i=0; i<touches.length; i++) {
+			index = self.getCurrentTouchIndex(touches[i].identifier);
 			if (index >= 0) {
-				self.pointer[index].x = e.touches[index].pageX - self.canvasLeft;
-				self.pointer[index].y = e.touches[index].pageY - self.canvasTop;
-				count++;
+				self.pointer[index].x = self.scene.scaleFactor * (touches[i].pageX - self.scene.canvasLeft);
+				self.pointer[index].y = self.scene.scaleFactor * (touches[i].pageY - self.scene.canvasTop);
 			}
 		}
-		self.pointerCount = e.touches.length;
 	}
 
 	this.handleTouchEnd = function (e) {
 		e.preventDefault();
 		var touches = e.changedTouches;
+		var index;
 
 		for (var i=0; i<touches.length; i++) {
-			var index = getCurrentTouchIndex(touches[i].identifier);
-			self.pointer.splice(index, 1);
+			index = self.getCurrentTouchIndex(touches[i].identifier);
+			if (index >= 0) {
+				self.pointer.splice(index, 1);
+			}
 		}
-		self.pointerCount = e.touches.length;
 	}
 };
 

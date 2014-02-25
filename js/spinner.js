@@ -46,16 +46,16 @@ Particle.prototype.interactWithPointer = function (pointer) {
 	var diffY = pointer.y - this.y;
 	var dist = Math.abs(diffX) + Math.abs(diffY); // coarse: ortho distance to save calc time
 	var dist2, fx, fy;
+	var pApproach;
 
-	if (dist < this.scene.pointerRadius) {
+	if (dist < this.scene.pointerRadius && dist > this.scene.pointerMinRadius) {
 		dist = Math.sqrt(diffX*diffX + diffY*diffY); // fine
-		if (dist < this.scene.pointerRadius) {
+		if (dist < this.scene.pointerRadius && dist > this.scene.pointerMinRadius) {
 			dist2 = Math.pow(dist, 4);
 			fx = this.scene.pointerForce * diffX / dist2;
 			fy = this.scene.pointerForce * diffY / dist2;
-
-			this.ax -= fx;
-			this.ay -= fy;
+			this.ax += fx;
+			this.ay += fy;
 		}
 	}
 }

@@ -16,8 +16,10 @@ edm.ready(function () {
 		}
 
 		for (i=0; i<myScene.numSpinners; i++) {
-			if (myGestureTracker.pointer[0].active) {
-				mySpinner[i].interactWithPointer(myGestureTracker.pointer[0]);
+			for (j=0; j<myGestureTracker.pointer.length; j++) {
+				if (myGestureTracker.pointer[j].active) {
+					mySpinner[i].interactWithPointer(myGestureTracker.pointer[j]);
+				}
 			}
 			mySpinner[i].draw();
 		}
@@ -33,16 +35,18 @@ edm.ready(function () {
 	var mySpinner = [];
 	var myGestureTracker = new GestureTracker(myScene);
 	var i;
+	var scale2 = myScene.scaleFactor * myScene.scaleFactor;
 
-	myScene.maxSpeed = 20; // pixels per frame
+	myScene.maxSpeed = 30 * myScene.scaleFactor; // pixels per frame
 	myScene.maxRotation = Math.PI / 32;
-	myScene.centerSeekingForce = 10.0;
-	myScene.interactionRadius = 200;
-	myScene.interactionForce = 15;
-	myScene.pointerRadius = 300;
-	myScene.pointerForce = 2000000;
-	myScene.numSpinners = Math.ceil(myScene.screenWidth * myScene.screenHeight) * 0.0003;
-	myScene.baseRadius = ((myScene.pixelWidth * myScene.pixelHeight) / myScene.numSpinners) / 1000;
+	myScene.centerSeekingForce = 20.0 * scale2;
+	myScene.interactionRadius = 200 * myScene.scaleFactor;
+	myScene.interactionForce = 35 * scale2;
+	myScene.pointerRadius = 200 * myScene.scaleFactor;
+	myScene.pointerMinRadius = 20 * myScene.scaleFactor;
+	myScene.pointerForce = 20000000 * scale2;
+	myScene.numSpinners = Math.ceil(myScene.screenWidth * myScene.screenHeight) * 0.0002;
+	myScene.baseRadius = ((myScene.screenWidth * myScene.pixelHeight) / myScene.numSpinners) / 1000;
 	myScene.spinnerFill = '#789';
 
 	var pointer = [];
@@ -51,9 +55,8 @@ edm.ready(function () {
 		mySpinner[i] = new Spinner(myScene);
 	}
 
-
 	myGestureTracker.initMouse();
-	// myScene.initTouch();
+	myGestureTracker.initTouch();
 	myScene.startLogging();
 	myScene.startAnimating(update);
 
