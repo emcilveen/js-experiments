@@ -147,6 +147,7 @@ var Scene = function (id) {
 		var touches = e.changedTouches;
 		var sumX=0, sumY=0;
 		var count = 0;
+self.log(self.trackingTouches, self.touchCount);
 
 		if (self.trackingTouches.length === 0) {
 			for (var i=0; i<touches.length; i++) {
@@ -178,6 +179,7 @@ var Scene = function (id) {
 		if (count > 0) {
 			self.mouseX = self.scaleFactor * sumX / count - self.canvasLeft;
 			self.mouseY = self.scaleFactor * sumY / count - self.canvasTop;
+			self.log(self.mouseX, self.mouseY);
 		}
 		self.touchCount = e.touches.length;
 	}
@@ -185,6 +187,7 @@ var Scene = function (id) {
 	this.handleTouchEnd = function (e) {
 		e.preventDefault();
 		var touches = e.changedTouches;
+		
 		for (var i=0; i<touches.length; i++) {
 			var index = getCurrentTouchIndex(touches[i].identifier);
 			self.trackingTouches.splice(index, 1);

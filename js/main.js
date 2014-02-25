@@ -1,6 +1,65 @@
 edm.ready(function () {
 
 	//
+	// PARTICLES
+	//
+
+	var maxSpeed = 10; // pixels per frame
+	var maxRotation = Math.PI / 16;
+	var interactionRadius = 200;
+	var userRadius = 200;
+
+	var Particle = function (scene) {
+		this.scene = scene;
+		this.x = scene.pixelWidth * Math.random();
+		this.y = scene.pixelHeight * Math.random();
+		this.r = Math.TWO_PI * Math.random();
+		this.vx = maxSpeed * Math.random() - maxSpeed*0.5;
+		this.vy = maxSpeed * Math.random() - maxSpeed*0.5;
+		this.vr = maxRotation*2 * Math.random() -maxRotation;
+		this.speed = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
+		this.ax = 0;
+		this.ay = 0;
+		this.ar = 0;
+	}
+
+	Particle.prototype.update = function () {
+		var scale;
+
+		this.vx += this.ax;
+		this.vy += this.ay;
+		this.speed = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
+		if (this.speed > maxSpeed) {
+			scale = maxSpeed / this.speed;
+			this.vx *= scale;
+			this.vy *= scale;
+		}
+		this.vr += this.ar;
+		if (this.vr > maxRotation) {
+			this.vr = maxRotation;
+		} else if (this.vx < -maxRotation) {
+			this.vr = -maxRotation;
+		}
+		this.x += this.vx;
+		this.y += this.vy;
+		this.r += this.vr;
+		this.ax = 0;
+		this.ay = 0;
+		this.ar = 0;
+	}
+
+	Particle.prototype.draw = function () {
+		this.update();
+		ctx = this.scene.context;
+		ctx.fillStyle = '#fff';
+
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		ctx.fillRect(-1, -1, 2, 2);
+		ctx.restore();
+	}
+
+	//
 	// SPINNERS
 	//
 
@@ -9,30 +68,29 @@ edm.ready(function () {
 	var spinnerFill = '#789';
 
 	var Spinner = function (scene) {
+		Particle.call(this, scene);
 		var color = edm.hexToRgb(spinnerFill);
 		color.r += Math.random() * 80 - 40;
 		color.g += Math.random() * 20 - 10;
 		color.b += Math.random() * 40 - 20;
-
-		this.scene = scene;
-		this.x = scene.pixelWidth * Math.random();
-		this.y = scene.pixelHeight * Math.random();
-		this.rotation = Math.TWO_PI * Math.random();
-		this.rotationSpeed = Math.random() * 0.04 - 0.02;
-		this.innerRadius = 10 + 20 * Math.random();
-		this.outerRadius = 30 + 40 * Math.random();
 		this.fill = edm.rgbToHex(color);
+
+		this.innerRadius = (1 + 2 * Math.random()) * (scene.pixelWidth/numSpinners)/2;
+		this.outerRadius = (3 + 4 * Math.random()) * (scene.pixelWidth/numSpinners)/2;
 		this.following = -1;
 	}
 
+	Spinner.prototype = Object.create(Particle.prototype);
+	Spinner.prototype.constructor = Spinner;
+
 	Spinner.prototype.draw = function () {
-		this.rotation += this.rotationSpeed;
+		this.update();
 		ctx = this.scene.context;
 		ctx.fillStyle = this.fill;
 
 		ctx.save();
 		ctx.translate(this.x, this.y);
-		ctx.rotate(this.rotation);
+		ctx.rotate(this.r);
 		ctx.beginPath();
 		ctx.moveTo(this.innerRadius, 0);
 		for (var i=0; i<4; i++) {
@@ -121,11 +179,11 @@ edm.ready(function () {
 
 		for (var i=0; i<numSpinners; i++) {
 			if (mySpinner[i].following == mouse) {
-				mySpinner[i].rotationSpeed *= 0.9;
-				mySpinner[i].rotationSpeed += 0.1 * myGestureTracker.vHeadingSmoothed;
+				mySpinner[i].vr *= 0.9;
+				mySpinner[i].vr += 0.1 * myGestureTracker.vHeadingSmoothed;
 			}
 			if (Math.random() < 0.01) {
-				mySpinner[i].following = -1 - mySpinner[i].following;
+				// mySpinner[i].following = -1 - mySpinner[i].following;
 			}
 			mySpinner[i].draw();
 		}
@@ -148,5 +206,6 @@ edm.ready(function () {
 	myScene.startLogging();
 	myScene.startAnimating(update);
 
-	sc = myScene;
+	sc = myScene; // global for debugging
+	sp = mySpinner;
 });
