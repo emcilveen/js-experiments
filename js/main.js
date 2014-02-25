@@ -47,7 +47,8 @@ edm.ready(function () {
 	myScene.pointerForce = 20000000 * scale2;
 	myScene.numSpinners = Math.ceil(myScene.screenWidth * myScene.screenHeight) * 0.0002;
 	myScene.baseRadius = ((myScene.screenWidth * myScene.pixelHeight) / myScene.numSpinners) / 1000;
-	myScene.spinnerFill = '#789';
+	myScene.spinnerFill = '#8de';
+	myScene.bgColor = '#123';
 
 	var pointer = [];
 

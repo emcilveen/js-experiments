@@ -106,8 +106,8 @@ var Spinner = function (scene) {
 	Particle.call(this, scene);
 
 	var color = edm.hexToRgb(scene.spinnerFill);
-	color.r += Math.random() * 80 - 40;
-	color.g += Math.random() * 20 - 10;
+	color.r += Math.random() * 40 - 20;
+	color.g += Math.random() * 40 - 20;
 	color.b += Math.random() * 40 - 20;
 	this.fill = edm.rgbToHex(color);
 	this.innerRadius = (1 + 2 * Math.random()) * scene.baseRadius;
