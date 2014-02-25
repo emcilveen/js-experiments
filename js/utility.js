@@ -11,7 +11,7 @@
 // UTILITY
 //
 
-var EM_utility = (function () {
+var edm = (function () {
 
 //	var myPrivateVar = 0; 
 //	myPrivateMethod = function(foo) { console.log(foo); };

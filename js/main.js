@@ -1,4 +1,4 @@
-EM_utility.ready(function () {
+edm.ready(function () {
 
 	//
 	// SPINNERS
@@ -9,7 +9,7 @@ EM_utility.ready(function () {
 	var spinnerFill = '#789';
 
 	var Spinner = function (scene) {
-		var color = EM_utility.hexToRgb(spinnerFill);
+		var color = edm.hexToRgb(spinnerFill);
 		color.r += Math.random() * 80 - 40;
 		color.g += Math.random() * 20 - 10;
 		color.b += Math.random() * 40 - 20;
@@ -21,7 +21,7 @@ EM_utility.ready(function () {
 		this.rotationSpeed = Math.random() * 0.04 - 0.02;
 		this.innerRadius = 10 + 20 * Math.random();
 		this.outerRadius = 30 + 40 * Math.random();
-		this.fill = EM_utility.rgbToHex(color);
+		this.fill = edm.rgbToHex(color);
 		this.following = -1;
 	}
 
