@@ -87,115 +87,6 @@ var Scene = function (id) {
 	this.logBaseline = 'bottom';
 
 
-	// MOUSE
-
-	this.mouseX = 0, this.mouseY = 0;
-	this.click = {
-		primary: false,
-		secondary: false,
-		x: 0,
-		y: 0,
-		relAngle: 0
-	};
-
-	this.handleMouseDown = function (e) {
-		e.preventDefault();
-		if (e.which > 1) {
-			self.click.secondary = true;
-		} else {
-			self.click.primary = true;
-		}
-		self.mouseX = self.scaleFactor * (e.pageX - self.canvasLeft);
-		self.mouseY = self.scaleFactor * (e.pageY - self.canvasTop);
-	};
-
-	this.handleMouseMove = function (e) {
-		e.preventDefault();
-		self.mouseX = self.scaleFactor * (e.pageX - self.canvasLeft);
-		self.mouseY = self.scaleFactor * (e.pageY - self.canvasTop);
-	};
-
-	this.handleMouseUp = function (e) {
-		e.preventDefault();
-		if (e.which > 1) {
-			self.click.secondary = false;
-		} else {
-			self.click.primary = false;
-		}
-		self.mouseX = self.scaleFactor * (e.pageX - self.canvasLeft);
-		self.mouseY = self.scaleFactor * (e.pageY - self.canvasTop);
-	};
-
-
-	// TOUCH
-	// See https://developer.mozilla.org/en-US/docs/DOM/Touch_events#Example
-
-	this.trackingTouches = [];
-	this.touchCount = 0;
-
-	this.getCurrentTouchIndex = function (idToFind) {
-		for (var i=0; i<self.trackingTouches.length; i++) {
-			var id = self.trackingTouches[i].identifier;
-			if (id === idToFind) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	this.handleTouchStart = function (e) {
-		e.preventDefault();
-		var touches = e.changedTouches;
-		var sumX=0, sumY=0;
-		var count = 0;
-self.log(self.trackingTouches, self.touchCount);
-
-		if (self.trackingTouches.length === 0) {
-			for (var i=0; i<touches.length; i++) {
-				sumX += touches[i].pageX;
-				sumY += touches[i].pageY;
-				self.trackingTouches.push(touches[i]);
-				count++;
-			}
-			self.mouseX = self.scaleFactor * sumX / count - self.canvasLeft;
-			self.mouseY = self.scaleFactor * sumY / count - self.canvasTop;
-		}
-		self.touchCount = e.touches.length;
-	}
-
-	this.handleTouchMove = function (e) {
-		e.preventDefault();
-		var touches = e.touches;
-		var sumX=0, sumY=0;
-		var count = 0;
-
-		for (var i=0; i<touches.length; i++) {
-			var index = getCurrentTouchIndex(touches[i].identifier);
-			if (index >= 0) {
-				sumX += touches[index].pageX - self.canvasLeft;
-				sumY += touches[index].pageY;
-				count++;
-			}
-		}
-		if (count > 0) {
-			self.mouseX = self.scaleFactor * sumX / count - self.canvasLeft;
-			self.mouseY = self.scaleFactor * sumY / count - self.canvasTop;
-			self.log(self.mouseX, self.mouseY);
-		}
-		self.touchCount = e.touches.length;
-	}
-
-	this.handleTouchEnd = function (e) {
-		e.preventDefault();
-		var touches = e.changedTouches;
-
-		for (var i=0; i<touches.length; i++) {
-			var index = getCurrentTouchIndex(touches[i].identifier);
-			self.trackingTouches.splice(index, 1);
-		}
-		self.touchCount = e.touches.length;
-	}
-
 
 	// DRAW LOOP
 
@@ -206,32 +97,7 @@ self.log(self.trackingTouches, self.touchCount);
 		self.drawCallback.apply();
 		self.logDraw();
 	};
-}
-
-
-
-//
-// MOUSE
-//
-
-Scene.prototype.initMouse = function () {
-	window.addEventListener('mousedown', this.handleMouseDown, false);
-	window.addEventListener('mousemove', this.handleMouseMove, false);
-	window.addEventListener('mouseup', this.handleMouseUp, false);
-	window.addEventListener('contextmenu', function (e) {
-		e.preventDefault(); return false;
-	}, false);
-	window.addEventListener('mousewheel', function (e) {
-		e.preventDefault(); return false;
-	}, false);
 };
-
-Scene.prototype.initTouch = function () {
-	window.addEventListener('touchstart', this.handleTouchStart, false);
-	window.addEventListener('touchmove', this.handleTouchMove, false);
-	window.addEventListener('touchend', this.handleTouchEnd, false);
-	window.addEventListener('touchcancel', this.handleTouchEnd, false);
-}
 
 
 
