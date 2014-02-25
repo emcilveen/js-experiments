@@ -65,6 +65,7 @@ var Scene = function (id) {
 	this.canvas.height = this.pixelHeight;
 	this.canvas.style.width = this.screenWidth + 'px';
 	this.canvas.style.height = this.screenHeight + 'px';
+	this.scale = (this.pixelWidth * this.pixelWidth) * 0.0000003;
 
 	this.context = this.canvas.getContext('2d');
 
@@ -187,7 +188,7 @@ self.log(self.trackingTouches, self.touchCount);
 	this.handleTouchEnd = function (e) {
 		e.preventDefault();
 		var touches = e.changedTouches;
-		
+
 		for (var i=0; i<touches.length; i++) {
 			var index = getCurrentTouchIndex(touches[i].identifier);
 			self.trackingTouches.splice(index, 1);
