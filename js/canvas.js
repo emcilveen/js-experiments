@@ -65,7 +65,7 @@ var Scene = function (id) {
 	this.canvas.height = this.pixelHeight;
 	this.canvas.style.width = this.screenWidth + 'px';
 	this.canvas.style.height = this.screenHeight + 'px';
-	this.scale = (this.pixelWidth * this.pixelWidth) * 0.0000003;
+	this.scale = Math.sqrt(this.pixelWidth * this.pixelHeight) * 0.0008;
 
 	this.context = this.canvas.getContext('2d');
 

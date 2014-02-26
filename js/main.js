@@ -34,17 +34,17 @@ edm.ready(function () {
 	var myScene = new Scene('canvas');
 	var mySpinner = [];
 	var myGestureTracker = new GestureTracker(myScene);
-	var i;
 	var scale2 = myScene.scaleFactor * myScene.scaleFactor;
+	var i;
 
-	myScene.maxSpeed = 30 * myScene.scaleFactor; // pixels per frame
-	myScene.maxRotation = Math.PI / 32;
+	myScene.maxSpeed = 10 * myScene.scaleFactor; // pixels per frame
+	myScene.maxRotation = Math.PI / 24;
 	myScene.centerSeekingForce = 20.0 * scale2;
 	myScene.interactionRadius = 200 * myScene.scaleFactor;
 	myScene.interactionForce = 35 * scale2;
-	myScene.pointerRadius = 200 * myScene.scaleFactor;
+	myScene.pointerRadius = Math.min(200 * myScene.scaleFactor, myScene.pixelWidth/2, myScene.pixelHeight/2);
 	myScene.pointerMinRadius = 20 * myScene.scaleFactor;
-	myScene.pointerForce = 20000000 * scale2;
+	myScene.pointerForce = 5000000 * scale2;
 	myScene.numSpinners = Math.ceil(myScene.screenWidth * myScene.screenHeight) * 0.0002;
 	myScene.baseRadius = ((myScene.screenWidth * myScene.pixelHeight) / myScene.numSpinners) / 1000;
 	myScene.spinnerFill = '#8de';
@@ -61,6 +61,7 @@ edm.ready(function () {
 	myScene.startLogging();
 	myScene.startAnimating(update);
 
-	sc = myScene; // global for debugging
+	// globals for debugging
+	sc = myScene;
 	sp = mySpinner;
 });

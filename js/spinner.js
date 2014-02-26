@@ -9,7 +9,8 @@ var Particle = function (scene) {
 	this.r = Math.TWO_PI * Math.random();
 	this.vx = this.scene.maxSpeed * Math.random() - this.scene.maxSpeed*0.5;
 	this.vy = this.scene.maxSpeed * Math.random() - this.scene.maxSpeed*0.5;
-	this.vr = this.scene.maxRotation * Math.random() - this.scene.maxRotation*0.5;
+	this.vr = this.scene.maxRotation*0.5 * Math.random() + this.scene.maxRotation*0.5;
+	if (Math.random() > 0.5) { this.vr = -this.vr; }
 	this.speed = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
 	this.ax = 0;
 	this.ay = 0;
@@ -51,7 +52,7 @@ Particle.prototype.interactWithPointer = function (pointer) {
 	if (dist < this.scene.pointerRadius && dist > this.scene.pointerMinRadius) {
 		dist = Math.sqrt(diffX*diffX + diffY*diffY); // fine
 		if (dist < this.scene.pointerRadius && dist > this.scene.pointerMinRadius) {
-			dist2 = Math.pow(dist, 4);
+			dist2 = Math.pow(dist, 2);
 			fx = this.scene.pointerForce * diffX / dist2;
 			fy = this.scene.pointerForce * diffY / dist2;
 			this.ax += fx;
@@ -73,12 +74,6 @@ Particle.prototype.update = function () {
 		this.vx *= speedScale;
 		this.vy *= speedScale;
 	}
-	this.vr += this.ar;
-	if (this.vr > this.scene.maxRotation) {
-		this.vr = this.scene.maxRotation;
-	} else if (this.vx < -this.scene.maxRotation) {
-		this.vr = -this.scene.maxRotation;
-	}
 	this.x += this.vx * this.scene.scale;
 	this.y += this.vy * this.scene.scale;
 	this.r += this.vr;
@@ -97,6 +92,8 @@ Particle.prototype.draw = function () {
 	ctx.fillRect(-1, -1, 2, 2);
 	ctx.restore();
 };
+
+
 
 //
 // SPINNERS
