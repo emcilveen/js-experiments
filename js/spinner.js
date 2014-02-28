@@ -93,8 +93,6 @@ Particle.prototype.draw = function () {
 	ctx.restore();
 };
 
-
-
 //
 // SPINNERS
 //

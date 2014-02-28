@@ -1,6 +1,5 @@
 (function () {
-    // MATH EXTENSIONS
-
+	// MATH EXTENSIONS
 	Math.TWO_PI = 2 * Math.PI;
 	Math.HALF_PI = Math.PI / 2;
 } ());
@@ -13,28 +12,19 @@
 
 var edm = (function () {
 
-//	var myPrivateVar = 0; 
-//	myPrivateMethod = function(foo) { console.log(foo); };
 	var sampleInterval = 20;
 	var sampleCount = sampleInterval;
 
 	return {
- 
-	    // PUBLIC VARIABLES
-
-
-
-		// PUBLIC METHODS
 
 		ready: function (fn) {
 			if (document.addEventListener) {
-		    	document.addEventListener('DOMContentLoaded', fn);
+				document.addEventListener('DOMContentLoaded', fn);
 			} else {
 				document.attachEvent('onreadystatechange', function() {
-					if (document.readyState === 'interactive')
-						fn();
-		    	});
-			}
+					if (document.readyState === 'interactive') { fn(); }
+				});
+				}
 		},
 	 
 		extend: function (extension, destination) {
@@ -43,7 +33,7 @@ var edm = (function () {
 			}
 		},
 
-		//  Angle of a point from the origin. 0 = positive x axis ("east")
+		// Angle of a point from the origin. 0 = positive x axis ("east")
 		calcAngle: function (x, y) {
 			var angle = 0;
 			if (x === 0) {
