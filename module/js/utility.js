@@ -24,7 +24,7 @@ var edm = (function () {
 				document.attachEvent('onreadystatechange', function() {
 					if (document.readyState === 'interactive') { fn(); }
 				});
-				}
+			}
 		},
 	 
 		extend: function (extension, destination) {
