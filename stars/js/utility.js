@@ -27,7 +27,7 @@ var edm = (function () {
 			}
 		},
 	 
-		extend: function (extension, destination) {
+		extend: function (destination, extension) {
 			for ( var prop in extension ){
 				destination[prop] = extension[prop];
 			}
