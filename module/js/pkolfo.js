@@ -69,7 +69,7 @@ PkoPulseLfo.prototype.constructor = PkoPulseLfo;
 
 PkoPulseLfo.prototype.processPhase = function () {
 	this.ramp();
-	this.next.signal = this.bias + (this.cycle < this.params.width) ? this.params.amp : 0;
+	this.next.signal = this.params.bias + (this.cycle < this.params.width) ? this.params.amp : 0;
 }
 
 
