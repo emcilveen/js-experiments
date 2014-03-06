@@ -5,16 +5,11 @@ edm.ready(function () {
 	//
 
 	var update = function () {
-		myGestureTracker.update();
-		myScene.context.fillStyle = '#000';
-		myScene.context.fillRect(0,0,2000,2000);
+		// myGestureTracker.update();
 
-		myLfo.doUpdate();
-		myShape.doUpdate();
-		myLfo.doOutput();
-		myShape.doOutput();
-
-		// Draw code
+		myDispatcher.update();
+		myBg.draw();
+		myShape.draw();
 	}
 
 
@@ -23,12 +18,19 @@ edm.ready(function () {
 	// INIT
 	//
 
+	var myDispatcher = new PkoDispatcher();
+
 	var myScene = new Scene('canvas');
 	var myGestureTracker = new GestureTracker(myScene);
 
 	// myGestureTracker.initMouse();
 	// myGestureTracker.initTouch();
 	// myScene.startLogging();
+
+	var myBg = new PkoShape(myScene);
+	myBg.params.width = 2000;
+	myBg.params.height = 2000;
+	myBg.params.fill = '#000';
 
 	var myLfo = new PkoSineLfo();
 	var myShape = new PkoShape(myScene);
@@ -41,6 +43,10 @@ edm.ready(function () {
 	myShape.inputs.r = function () {
 		return Math.PI / 4 + myLfo.outputs.signal();
 	}
+
+	myDispatcher.addModule(myBg);
+	myDispatcher.addModule(myLfo);
+	myDispatcher.addModule(myShape);
 
 	myScene.startAnimating(update);
 

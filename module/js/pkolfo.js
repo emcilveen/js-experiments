@@ -43,7 +43,7 @@ PkoLfo.prototype.ramp = function () {
 	this.cycle = s;
 }
 
-PkoLfo.prototype.update = function () {
+PkoLfo.prototype.processPhase = function () {
 	this.ramp();
 	this.next.signal = this.cycle + this.params.bias;
 }
@@ -67,7 +67,7 @@ var PkoPulseLfo = function () {
 PkoPulseLfo.prototype = Object.create(PkoLfo.prototype);
 PkoPulseLfo.prototype.constructor = PkoPulseLfo;
 
-PkoPulseLfo.prototype.update = function () {
+PkoPulseLfo.prototype.processPhase = function () {
 	this.ramp();
 	this.next.signal = this.bias + (this.cycle < this.params.width) ? this.params.amp : 0;
 }
@@ -85,7 +85,7 @@ var PkoSineLfo = function () {
 PkoSineLfo.prototype = Object.create(PkoLfo.prototype);
 PkoSineLfo.prototype.constructor = PkoSineLfo;
 
-PkoSineLfo.prototype.update = function () {
+PkoSineLfo.prototype.processPhase = function () {
 	this.ramp();
 	this.next.signal = this.params.amp * Math.sin(this.cycle * Math.TWO_PI);
 }

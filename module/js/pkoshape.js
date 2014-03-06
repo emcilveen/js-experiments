@@ -3,6 +3,9 @@
 //
 
 var PkoShape = function (scene) {
+	if (typeof scene != 'object') {
+		throw 'PkoShape: Scene parameter missing.';
+	}
 	PkoModule.call(this);
 	this.scene = scene;
 
@@ -37,7 +40,3 @@ PkoShape.prototype.draw = function () {
 	ctx.fillRect(0, 0, this.params.width, this.params.height);
 	ctx.restore();
 };
-
-PkoShape.prototype.update = function () {
-	this.draw();
-}

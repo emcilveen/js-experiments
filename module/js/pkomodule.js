@@ -4,6 +4,7 @@
 
 var PkoModule = function (scene) {
 	var self = this;
+	this.dispatcher = null;
 	this.fps = 60;
 
 	// functions mapped to parameters; should have the same set of keys as params, below
@@ -21,19 +22,18 @@ var PkoModule = function (scene) {
 	this.outputs = {};
 };
 
-PkoModule.prototype.doUpdate = function () {
+PkoModule.prototype.inputPhase = function () {
 	for (fn in this.inputs) {
 		if (typeof this.inputs[fn] == 'function') {
 			this.params[fn] = this.inputs[fn].apply(this);
 		}
 	}
-	this.update.apply(this);
 };
 
-PkoModule.prototype.update = function () {
+PkoModule.prototype.processPhase = function () {
 }
 
-PkoModule.prototype.doOutput = function () {
+PkoModule.prototype.resultPhase = function () {
 	for (v in this.results) {
 		this.results[v] = this.next[v];
 	}
