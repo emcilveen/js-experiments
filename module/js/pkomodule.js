@@ -2,24 +2,39 @@
 // MODULES
 //
 
-var PkoModule = function (scene) {
+var PkoModule = function (options) {
 	var self = this;
 	this.dispatcher = null;
 	this.fps = 60;
 
 	// functions mapped to parameters; should have the same set of keys as params, below
-	this.inputs = {};
+	this.inputs = options ? edm.extend({}, options.inputs) : {};
 
 	// latest values copied from sources (these stay constant, if function is missing)
-	this.params = {};
+	this.params = options ? edm.extend({}, options.params) : {};
 
 	// results of calculation
 	this.next = {};
-	this.results = {};
+	this.results = options ? edm.extend({}, options.results) : {};
 
 	// public output functions;
 	// for efficiency should generally be simple getter method, with processing done by actionPhase()
-	this.outputs = {};
+	this.outputs = options ? edm.extend({}, options.outputs) : {};
+
+	// create getters for results that haven't been explicitly assigned functions
+	for (var key in this.results) {
+		if (!this.outputs[key]) {
+			this.bindGetter(key, this.results[key]);
+		}
+	}
+};
+
+PkoModule.prototype.bindGetter = function (prop) {
+	var _prop = prop;
+	var _object = this;
+	this.outputs[prop] = function() {
+		return _object.results[_prop];
+	};
 };
 
 PkoModule.prototype.inputPhase = function () {
@@ -31,10 +46,10 @@ PkoModule.prototype.inputPhase = function () {
 };
 
 PkoModule.prototype.processPhase = function () {
-}
+};
 
 PkoModule.prototype.resultPhase = function () {
 	for (v in this.results) {
 		this.results[v] = this.next[v];
 	}
-}
+};
