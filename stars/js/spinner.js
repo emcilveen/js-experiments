@@ -28,10 +28,10 @@ Particle.prototype.interactWithParticle = function (other) {
 	var dist = Math.abs(diffX) + Math.abs(diffY); // coarse: ortho distance to save calc time
 	var dist2, fx, fy;
 
-	if (dist < this.scene.interactionRadius) {
-		dist = Math.sqrt(diffX*diffX + diffY*diffY); // fine
-		if (dist < this.scene.interactionRadius) {
-			dist2 = dist*dist;
+	if (dist < this.scene.interactionRadiusOrtho) {
+		dist2 = diffX*diffX + diffY*diffY; // fine
+		if (dist2 < this.scene.interactionRadius2) {
+			dist = Math.sqrt(dist2); // fine
 			fx = this.scene.interactionForce * diffX / dist2;
 			fy = this.scene.interactionForce * diffY / dist2;
 			this.ax -= fx;

@@ -40,7 +40,9 @@ edm.ready(function () {
 	myScene.maxSpeed = 10 * myScene.scaleFactor; // pixels per frame
 	myScene.maxRotation = Math.PI / 24;
 	myScene.centerSeekingForce = 20.0 * scale2;
-	myScene.interactionRadius = 200 * myScene.scaleFactor;
+	myScene.interactionRadius = 180 * myScene.scaleFactor;
+	myScene.interactionRadiusOrtho = myScene.interactionRadius * Math.sqrt(2);
+	myScene.interactionRadius2 = myScene.interactionRadius * myScene.interactionRadius;
 	myScene.interactionForce = 35 * scale2;
 	myScene.pointerRadius = Math.min(200 * myScene.scaleFactor, myScene.pixelWidth/2, myScene.pixelHeight/2);
 	myScene.pointerMinRadius = 20 * myScene.scaleFactor;
