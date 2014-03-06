@@ -27,10 +27,23 @@ var edm = (function () {
 			}
 		},
 	 
-		extend: function (destination, extension) {
-			for ( var prop in extension ){
-				destination[prop] = extension[prop];
+		extend: function (destination, source) {
+			for (var prop in source) {
+				destination[prop] = source[prop];
 			}
+		},
+
+		// after http://andrewdupont.net/2009/08/28/deep-extending-objects-in-javascript/
+		deepExtend : function(destination, source) {
+		  	for (var prop in source) {
+			    if (source[prop] && source[prop].constructor && source[prop].constructor === Object) {
+				    destination[prop] = destination[prop] || {};
+					arguments.callee(destination[prop], source[prop]);
+			    } else {
+		      		destination[prop] = source[prop];
+		    	}
+		  	}
+		  	return destination;
 		},
 
 		// Angle of a point from the origin. 0 = positive x axis ("east")
