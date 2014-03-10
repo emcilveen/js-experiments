@@ -5,12 +5,9 @@ edm.ready(function () {
 	//
 
 	var update = function () {
-		// myGestureTracker.update();
-
-		myDispatcher.update();
 		myBg.draw();
 		myShape.draw();
-	}
+	};
 
 
 
@@ -20,12 +17,8 @@ edm.ready(function () {
 
 	var myDispatcher = new PkoDispatcher();
 
-	var myScene = new Scene('canvas');
+	var myScene = new PkoScene('canvas');
 	var myGestureTracker = new GestureTracker(myScene);
-
-	// myGestureTracker.initMouse();
-	// myGestureTracker.initTouch();
-	// myScene.startLogging();
 
 	var myBg = new PkoShape({
 		scene: myScene,
@@ -57,7 +50,20 @@ edm.ready(function () {
 			fill: '#cba'
 		},
 		inputs: {
-			r: function () { return Math.PI / 4 + myLfo.outputs.signal(); }
+			r: function () { return Math.PI / 4 + 0.5*myLfo.outputs.signal(); }
+		}
+	});
+	var myShape2 = new PkoShape({
+		scene: myScene,
+		params: {
+			x: 330,
+			y: 430,
+			width: 100,
+			height: 100,
+			fill: '#567'
+		},
+		inputs: {
+			r: function () { return Math.PI / 4 - myLfo.outputs.signal(); }
 		}
 	});
 
@@ -65,6 +71,13 @@ edm.ready(function () {
 	myDispatcher.addModule(myLfo);
 	myDispatcher.addModule(my2Lfo);
 	myDispatcher.addModule(myShape);
+	myDispatcher.addModule(myShape2);
+	myDispatcher.addCallback(myScene.draw);
+
+	myScene.addToDrawList(myBg, 0);
+	myScene.addToDrawList(myShape, 10);
+	myScene.addToDrawList(myShape2, 50);
+
 
 	// globals for debugging
 	sc = myScene;
@@ -73,6 +86,9 @@ edm.ready(function () {
 	l2 = my2Lfo;
 	dis = myDispatcher;
 
-	// update(); return;
-	myScene.startAnimating(update);
+	console.log(myDispatcher);
+
+	// myDispatcher.update(); return; // run once and stop for debugging
+	myDispatcher.start();
 });
+

@@ -4,7 +4,7 @@
 
 // Creates a sawtooth waveform that (by default) ramps up from 0 to 1.
 // Future addition: phase
-var PkoLfo = function (options) {
+var PkoLfo = function PkoLfo(options) {
 	options = edm.deepExtend({
 		params: {
 			amp: 1,
@@ -25,7 +25,7 @@ PkoLfo.prototype = Object.create(PkoModule.prototype);
 PkoLfo.prototype.constructor = PkoLfo;
 
 // Ramp function provides the timing for all derived LFOs.
-PkoLfo.prototype.ramp = function () {
+PkoLfo.prototype.ramp = function ramp() {
 	var s = this.cycle + this.params.freq/this.fps;
 	if (s >= 1 || s < 0) {
 		s -= Math.floor(s); // floor(n) gives the largest integer <= n, so this ensures that 0 <= s < 1.
@@ -33,7 +33,7 @@ PkoLfo.prototype.ramp = function () {
 	this.cycle = s;
 };
 
-PkoLfo.prototype.processPhase = function () {
+PkoLfo.prototype.processPhase = function processPhase() {
 	this.ramp();
 	this.next.signal = this.cycle + this.params.bias;
 };
@@ -43,7 +43,7 @@ PkoLfo.prototype.processPhase = function () {
 // PULSE WAVE
 //
 
-var PkoPulseLfo = function (options) {
+var PkoPulseLfo = function PkoPulseLfo(options) {
 	options = edm.deepExtend({
 		params: {
 			width: 0.5
@@ -56,7 +56,7 @@ var PkoPulseLfo = function (options) {
 PkoPulseLfo.prototype = Object.create(PkoLfo.prototype);
 PkoPulseLfo.prototype.constructor = PkoPulseLfo;
 
-PkoPulseLfo.prototype.processPhase = function () {
+PkoPulseLfo.prototype.processPhase = function processPhase() {
 	this.ramp();
 	this.next.signal = this.params.bias + (this.cycle < this.params.width) ? this.params.amp : 0;
 };
@@ -67,15 +67,14 @@ PkoPulseLfo.prototype.processPhase = function () {
 //
 
 // By default, has values between -1 to 1.
-var PkoSineLfo = function (options) {
+var PkoSineLfo = function PkoSineLfo(options) {
 	PkoLfo.call(this, options);
 };
 
 PkoSineLfo.prototype = Object.create(PkoLfo.prototype);
 PkoSineLfo.prototype.constructor = PkoSineLfo;
 
-PkoSineLfo.prototype.processPhase = function () {
+PkoSineLfo.prototype.processPhase = function processPhase() {
 	this.ramp();
 	this.next.signal = this.params.amp * Math.sin(this.cycle * Math.TWO_PI);
 };
-

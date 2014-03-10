@@ -8,7 +8,6 @@ Begun 3 March 2014
 
 !! TODO
 
-Scene.drawList[]
 Mouse input
 Touch input
 Scene: options including full-screen

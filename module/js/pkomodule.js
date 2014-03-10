@@ -2,7 +2,7 @@
 // MODULES
 //
 
-var PkoModule = function (options) {
+var PkoModule = function PkoModule(options) {
 	var self = this;
 	this.dispatcher = null;
 	this.fps = 60;
@@ -29,7 +29,7 @@ var PkoModule = function (options) {
 	}
 };
 
-PkoModule.prototype.bindGetter = function (prop) {
+PkoModule.prototype.bindGetter = function bindGetter(prop) {
 	var _prop = prop;
 	var _object = this;
 	this.outputs[prop] = function() {
@@ -37,7 +37,7 @@ PkoModule.prototype.bindGetter = function (prop) {
 	};
 };
 
-PkoModule.prototype.inputPhase = function () {
+PkoModule.prototype.inputPhase = function inputPhase() {
 	for (fn in this.inputs) {
 		if (typeof this.inputs[fn] == 'function') {
 			this.params[fn] = this.inputs[fn].apply(this);
@@ -45,10 +45,10 @@ PkoModule.prototype.inputPhase = function () {
 	}
 };
 
-PkoModule.prototype.processPhase = function () {
+PkoModule.prototype.processPhase = function processPhase() {
 };
 
-PkoModule.prototype.resultPhase = function () {
+PkoModule.prototype.resultPhase = function resultPhase() {
 	for (v in this.results) {
 		this.results[v] = this.next[v];
 	}

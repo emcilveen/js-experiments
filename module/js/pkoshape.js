@@ -2,7 +2,9 @@
 // SHAPE
 //
 
-var PkoShape = function (options) {
+var PkoShape = function PkoShape(options) {
+	var self = this;
+
 	options = edm.deepExtend({
 		params: {
 			x: 1,
@@ -21,17 +23,17 @@ var PkoShape = function (options) {
 	} else {
 		throw 'PkoShape: Scene parameter missing.';
 	}
+
+	this.draw = function draw() {
+		ctx = self.scene.context;
+		ctx.fillStyle = self.params.fill;
+		ctx.save();
+		ctx.translate(self.params.x, self.params.y);
+		ctx.rotate(self.params.r);
+		ctx.fillRect(0, 0, self.params.width, self.params.height);
+		ctx.restore();
+	};
 };
 
 PkoShape.prototype = Object.create(PkoModule.prototype);
 PkoShape.prototype.constructor = PkoShape;
-
-PkoShape.prototype.draw = function () {
-	ctx = this.scene.context;
-	ctx.fillStyle = this.params.fill;
-	ctx.save();
-	ctx.translate(this.params.x, this.params.y);
-	ctx.rotate(this.params.r);
-	ctx.fillRect(0, 0, this.params.width, this.params.height);
-	ctx.restore();
-};

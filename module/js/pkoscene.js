@@ -1,37 +1,8 @@
-(function () {
-	// SCREEN AND CANVAS
+//
+// SCENE
+//
 
-	// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
-	// MIT license
-
-    var lastTime = 0;
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
-    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
-                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
-    }
-
-    if (!window.requestAnimationFrame) {
-        window.requestAnimationFrame = function(callback, element) {
-            var currTime = new Date().getTime();
-            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
-              timeToCall);
-            lastTime = currTime + timeToCall;
-            return id;
-        };
-    }
-
-    if (!window.cancelAnimationFrame) {
-        window.cancelAnimationFrame = function(id) {
-            clearTimeout(id);
-        };
-    }
-} ());
-
-
-var Scene = function (id) {
+var PkoScene = function (id) {
 	var self = this;
 
 	this.id = id;
@@ -66,13 +37,10 @@ var Scene = function (id) {
 	this.canvas.style.width = this.screenWidth + 'px';
 	this.canvas.style.height = this.screenHeight + 'px';
 	this.scale = Math.sqrt(this.pixelWidth * this.pixelHeight) * 0.0008;
-
 	this.context = this.canvas.getContext('2d');
 
-	this.bgColor = '#123';
-
-	this.drawCallback = function () {};
-
+	this.drawListObject = [];
+	this.drawListZIndex = [];
 
 	// LOGGING
 
@@ -86,19 +54,62 @@ var Scene = function (id) {
 	this.logFont = '20px serif';
 	this.logBaseline = 'bottom';
 
-
-
-	// DRAW LOOP
-
-	this.draw = function () {
-		window.requestAnimationFrame(self.draw);
-		self.context.fillStyle = self.bgColor;
-		self.context.fillRect(0, 0, self.pixelWidth, self.pixelHeight);
-		self.drawCallback.apply();
-		self.logDraw();
+	this.draw = function draw() {
+		// for (var i=self.drawListObject.length-1; i>=0; i--) {
+		for (var i=0; i<self.drawListObject.length; i++) {
+			self.drawListObject[i].draw.apply(self);
+		}
 	};
 };
 
+
+
+//
+// DRAW LIST
+//
+
+// Newest module sharing a z-index goes on top (after)
+PkoScene.prototype.addToDrawList = function addToDrawList(m, zIndex) {
+	var p; // position under consideration
+	var floor = 0;
+	var ceiling = this.drawListObject.length;
+
+	zIndex = zIndex || 0;
+
+	if (this.drawListObject.indexOf(m) < 0) {
+		while (ceiling > floor) {
+			p = Math.floor((ceiling + floor) * 0.5);
+			if (zIndex >= this.drawListZIndex[p]) {
+				floor = p + 1;
+			} else if (zIndex < this.drawListZIndex[p]) {
+				ceiling = p;
+			}
+		}
+
+		this.drawListObject.splice(floor, 0, m);
+		this.drawListZIndex.splice(floor, 0, zIndex);
+		return true;
+	}
+	return false;
+};
+
+PkoScene.prototype.removeFromDrawList = function removeFromDrawList(m) {
+	var i = this.drawListObject.indexOf(m);
+	if (i >= 0) {
+		this.drawListObject.splice(i, 1);
+		this.drawListZIndex.splice(i, 1);
+		return true;
+	}
+	return false;
+};
+
+PkoScene.prototype.changeZIndex = function changeZIndex(m, zIndex) {
+	if (this.removeFromDrawList(m)) {
+		this.addToDrawList(m, zIndex);
+		return true;
+	}
+	return false;
+};
 
 
 //
@@ -106,7 +117,7 @@ var Scene = function (id) {
 //
 
 // Write debugging log to canvas -- call from animation draw loop.
-Scene.prototype.logDraw = function () {
+PkoScene.prototype.logDraw = function logDraw() {
 	if (this.logActive) {
 		this.context.fillStyle = this.logColor;
 		this.context.font = this.logFont;
@@ -117,7 +128,7 @@ Scene.prototype.logDraw = function () {
 	}
 };
 
-Scene.prototype.log = function () {
+PkoScene.prototype.log = function log() {
 	var text = '';
 
 	for (var i=0; i<arguments.length; i++) {
@@ -129,20 +140,18 @@ Scene.prototype.log = function () {
 	}
 };
 
-Scene.prototype.startLogging = function () {
+PkoScene.prototype.startLogging = function startLogging() {
 	this.logActive = true;
 };
 
-Scene.prototype.stopLogging = function () {
+PkoScene.prototype.stopLogging = function stopLogging() {
 	this.logActive = false;
 };
 
-Scene.prototype.startAnimating = function (callback) {
-	this.drawCallback = callback;
-	this.draw();
-};
 
-Scene.prototype.stopAnimating = function () {
-	this.animating = false;
-};
+//
+// MAIN LOOP
+//
+
+
 
