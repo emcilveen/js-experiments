@@ -2,9 +2,9 @@
 // MODULES
 //
 
-var PkoModule = function PkoModule(options) {
+var PkoModule = function PkoModule(dispatcher, options) {
 	var self = this;
-	this.dispatcher = null;
+	this.dispatcher = dispatcher;
 	this.fps = 60;
 
 	// functions mapped to parameters; should have the same set of keys as params, below
@@ -27,6 +27,8 @@ var PkoModule = function PkoModule(options) {
 			this.bindGetter(key, this.results[key]);
 		}
 	}
+
+	dispatcher.addModule(this);
 };
 
 PkoModule.prototype.bindGetter = function bindGetter(prop) {

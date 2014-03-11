@@ -2,13 +2,15 @@
 // SHAPE
 //
 
-var PkoShape = function PkoShape(options) {
+var PkoShape = function PkoShape(dispatcher, scene, zIndex, options) {
 	var self = this;
 
 	options = edm.deepExtend({
 		params: {
-			x: 1,
-			y: 1,
+			x: 0,
+			y: 0,
+			originX: 0,
+			originY: 0,
 			r: 0,
 			width: 1,
 			height: 1,
@@ -16,10 +18,11 @@ var PkoShape = function PkoShape(options) {
 		}
 	}, options);
 
-	PkoModule.call(this, options);
+	PkoModule.call(this, dispatcher, options);
 
-	if (typeof options.scene == 'object') {
-		this.scene = options.scene;
+	if (typeof scene == 'object') {
+		this.scene = scene;
+		scene.addToDrawList(this, zIndex || 0);
 	} else {
 		throw 'PkoShape: Scene parameter missing.';
 	}
@@ -30,6 +33,7 @@ var PkoShape = function PkoShape(options) {
 		ctx.save();
 		ctx.translate(self.params.x, self.params.y);
 		ctx.rotate(self.params.r);
+		ctx.translate(self.params.originX, self.params.originY);
 		ctx.fillRect(0, 0, self.params.width, self.params.height);
 		ctx.restore();
 	};
@@ -37,17 +41,3 @@ var PkoShape = function PkoShape(options) {
 
 PkoShape.prototype = Object.create(PkoModule.prototype);
 PkoShape.prototype.constructor = PkoShape;
-
-PkoDispatcher.prototype.newShape = function newShape(options) {
-	options = edm.deepExtend({
-		scene: this.scene
-	}, options);
-	var m = new PkoShape(options);
-	this.addModule(m);
-	this.scene.addToDrawList(m, options.z || 0);
-};
-
-PkoDispatcher.prototype.deleteShape = function deleteShape(m) {
-	this.removeModule(m);
-	// TODO: Delete?
-};

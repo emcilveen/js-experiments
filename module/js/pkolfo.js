@@ -4,7 +4,7 @@
 
 // Creates a sawtooth waveform that (by default) ramps up from 0 to 1.
 // Future addition: phase
-var PkoLfo = function PkoLfo(options) {
+var PkoLfo = function PkoLfo(dispatcher, options) {
 	options = edm.deepExtend({
 		params: {
 			amp: 1,
@@ -16,7 +16,7 @@ var PkoLfo = function PkoLfo(options) {
 		}
 	}, options);
 
-	PkoModule.call(this, options);
+	PkoModule.call(this, dispatcher, options);
 
 	this.cycle = 0;
 };
@@ -43,14 +43,14 @@ PkoLfo.prototype.processPhase = function processPhase() {
 // PULSE WAVE
 //
 
-var PkoPulseLfo = function PkoPulseLfo(options) {
+var PkoPulseLfo = function PkoPulseLfo(dispatcher, options) {
 	options = edm.deepExtend({
 		params: {
 			width: 0.5
 		}
 	}, options);
 
-	PkoLfo.call(this, options);
+	PkoLfo.call(this, dispatcher, options);
 };
 
 PkoPulseLfo.prototype = Object.create(PkoLfo.prototype);
@@ -67,8 +67,8 @@ PkoPulseLfo.prototype.processPhase = function processPhase() {
 //
 
 // By default, has values between -1 to 1.
-var PkoSineLfo = function PkoSineLfo(options) {
-	PkoLfo.call(this, options);
+var PkoSineLfo = function PkoSineLfo(dispatcher, options) {
+	PkoLfo.call(this, dispatcher, options);
 };
 
 PkoSineLfo.prototype = Object.create(PkoLfo.prototype);
@@ -77,38 +77,4 @@ PkoSineLfo.prototype.constructor = PkoSineLfo;
 PkoSineLfo.prototype.processPhase = function processPhase() {
 	this.ramp();
 	this.next.signal = this.params.amp * Math.sin(this.cycle * Math.TWO_PI);
-};
-
-
-PkoDispatcher.prototype.newLfo = function newLfo(options) {
-	var m = new PkoLfo(options);
-	this.addModule(m);
-	return m;
-};
-
-PkoDispatcher.prototype.deleteLfo = function deleteLfo(m) {
-	this.removeModule(m);
-	// TODO: Delete?
-};
-
-PkoDispatcher.prototype.newPulseLfo = function newPulseLfo(options) {
-	var m = new PkoPulseLfo(options);
-	this.addModule(m);
-	return m;
-};
-
-PkoDispatcher.prototype.deletePulseLfo = function deletePulseLfo(m) {
-	this.removeModule(m);
-	// TODO: Delete?
-};
-
-PkoDispatcher.prototype.newSineLfo = function newSineLfo(options) {
-	var m = new PkoSineLfo(options);
-	this.addModule(m);
-	return m;
-};
-
-PkoDispatcher.prototype.deleteSineLfo = function deleteSineLfo(m) {
-	this.removeModule(m);
-	// TODO: Delete?
 };

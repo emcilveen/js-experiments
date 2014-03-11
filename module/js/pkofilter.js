@@ -3,7 +3,7 @@
 //
 
 // Default filter: simple amp, defaults to unity gain.
-var PkoFilter = function PkoFilter(options) {
+var PkoFilter = function PkoFilter(dispatcher, options) {
 	options = edm.deepExtend({
 		params: {
 			source: 0,
@@ -15,7 +15,7 @@ var PkoFilter = function PkoFilter(options) {
 		}
 	}, options);
 
-	PkoModule.call(this, options);
+	PkoModule.call(this, dispatcher, options);
 };
 
 PkoFilter.prototype = Object.create(PkoModule.prototype);
@@ -29,14 +29,14 @@ PkoFilter.prototype.processPhase = function processPhase() {
 // SMOOTHING
 //
 
-var PkoSmoothingFilter = function PkoSmoothingFilter(options) {
+var PkoSmoothingFilter = function PkoSmoothingFilter(dispatcher, options) {
 	options = edm.deepExtend({
 		params: {
 			strength: 0.9 // range: 0..1 where 0 is unfiltered and 1 is DC
 		}
 	}, options);
 
-	PkoFilter.call(this, options);
+	PkoFilter.call(this, dispatcher, options);
 
 	this.current = 0;
 };
@@ -49,26 +49,4 @@ PkoSmoothingFilter.prototype.processPhase = function processPhase() {
 		(this.params.source * this.params.amp) * (1-this.params.strength);
 	this.next.signal = this.current;
 	// TODO: Bias?
-};
-
-PkoDispatcher.prototype.newFilter = function newFilter(options) {
-	var m = new PkoFilter(options);
-	this.addModule(m);
-	return m;
-};
-
-PkoDispatcher.prototype.deleteFilter = function deleteFilter(m) {
-	this.removeModule(m);
-	// TODO: Delete?
-};
-
-PkoDispatcher.prototype.newSmoothingFilter = function newSmoothingFilter(options) {
-	var m = new PkoSmoothingFilter(options);
-	this.addModule(m);
-	return m;
-};
-
-PkoDispatcher.prototype.deleteSmoothingFilter = function deleteSmoothingFilter(m) {
-	this.removeModule(m);
-	// TODO: Delete?
 };

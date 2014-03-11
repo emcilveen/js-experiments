@@ -1,26 +1,14 @@
 edm.ready(function () {
 
 	//
-	// MAIN LOOP
-	//
-
-	var update = function update() {
-		myBg.draw();
-		myShape.draw();
-	};
-
-
-
-	//
 	// INIT
 	//
 
+	scn = new PkoScene('canvas');
+	dis = new PkoDispatcher(scn);
+	myGestureTracker = new GestureTracker(scn);
 
-	var myScene = new PkoScene('canvas');
-	var myDispatcher = new PkoDispatcher(myScene);
-	var myGestureTracker = new GestureTracker(myScene);
-
-	myDispatcher.newShape({
+	myBg = new PkoShape(dis, scn, 0, {
 		params: {
 			width: 2000,
 			height: 2000,
@@ -28,18 +16,18 @@ edm.ready(function () {
 		}
 	});
 
-	my2Lfo = myDispatcher.newSineLfo({
+	my2Lfo = new PkoSineLfo(dis, {
 		params: {
 			freq: 0.5
 		}
 	});
-	var my3Lfo = myDispatcher.newPulseLfo({
+	my3Lfo = new PkoPulseLfo(dis, {
 		params: {
 			amp: 1,
 			freq: 1.1
 		}
 	});
-	var myFilter = myDispatcher.newSmoothingFilter({
+	myFilter = new PkoSmoothingFilter(dis, {
 		params: {
 			strength: 0.6
 		},
@@ -47,16 +35,15 @@ edm.ready(function () {
 			source: function() { return my3Lfo.outputs.signal(); }
 		}
 	});
-	var myLfo = myDispatcher.newSineLfo({
+	myLfo = new PkoSineLfo(dis, {
 		inputs: {
 			freq: function() { return 1.1 + my2Lfo.outputs.signal(); }
 		}
 	});
-	myDispatcher.newShape({
+	sq1 = new PkoShape(dis, scn, 10, {
 		params: {
 			x: 300,
 			y: 400,
-			z: 10,
 			width: 100,
 			height: 100,
 			fill: '#cba'
@@ -65,12 +52,12 @@ edm.ready(function () {
 			r: function() { return Math.PI / 4 + 0.5*myLfo.outputs.signal(); }
 		}
 	});
-	myDispatcher.newShape({
-		scene: myScene,
+	sq2 = new PkoShape(dis, scn, 2, {
 		params: {
 			x: 330,
 			y: 430,
-			z: 4,
+			originX: -50,
+			originY: -50,
 			width: 100,
 			height: 100,
 			fill: '#567'
@@ -80,11 +67,7 @@ edm.ready(function () {
 		}
 	});
 
-	// globals for debugging
-	sc = myScene;
-	dis = myDispatcher;
-
-	// myDispatcher.update(); return; // run once and stop for debugging
-	myDispatcher.start();
+	// dis.update(); return; // run once and stop for debugging
+	dis.start();
 });
 
