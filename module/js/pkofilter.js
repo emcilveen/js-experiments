@@ -51,3 +51,24 @@ PkoSmoothingFilter.prototype.processPhase = function processPhase() {
 	// TODO: Bias?
 };
 
+PkoDispatcher.prototype.newFilter = function newFilter(options) {
+	var m = new PkoFilter(options);
+	this.addModule(m);
+	return m;
+};
+
+PkoDispatcher.prototype.deleteFilter = function deleteFilter(m) {
+	this.removeModule(m);
+	// TODO: Delete?
+};
+
+PkoDispatcher.prototype.newSmoothingFilter = function newSmoothingFilter(options) {
+	var m = new PkoSmoothingFilter(options);
+	this.addModule(m);
+	return m;
+};
+
+PkoDispatcher.prototype.deleteSmoothingFilter = function deleteSmoothingFilter(m) {
+	this.removeModule(m);
+	// TODO: Delete?
+};

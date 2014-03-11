@@ -6,12 +6,15 @@
 // respective input, process and result methods when it's time to update.
 // It also maintains a list of generic callbacks.
 
-var PkoDispatcher = function PkoDispatcher() {
+var PkoDispatcher = function PkoDispatcher(scene) {
 	var self = this;
+
+	this.scene = scene;
 	this.modules = [];
 	this.callbacks = [];
 	this.animating = false;
 	this.cycle = 0;
+	this.addCallback(scene.draw);
 
 	this.update = function update() {
 		var i;

@@ -78,3 +78,37 @@ PkoSineLfo.prototype.processPhase = function processPhase() {
 	this.ramp();
 	this.next.signal = this.params.amp * Math.sin(this.cycle * Math.TWO_PI);
 };
+
+
+PkoDispatcher.prototype.newLfo = function newLfo(options) {
+	var m = new PkoLfo(options);
+	this.addModule(m);
+	return m;
+};
+
+PkoDispatcher.prototype.deleteLfo = function deleteLfo(m) {
+	this.removeModule(m);
+	// TODO: Delete?
+};
+
+PkoDispatcher.prototype.newPulseLfo = function newPulseLfo(options) {
+	var m = new PkoPulseLfo(options);
+	this.addModule(m);
+	return m;
+};
+
+PkoDispatcher.prototype.deletePulseLfo = function deletePulseLfo(m) {
+	this.removeModule(m);
+	// TODO: Delete?
+};
+
+PkoDispatcher.prototype.newSineLfo = function newSineLfo(options) {
+	var m = new PkoSineLfo(options);
+	this.addModule(m);
+	return m;
+};
+
+PkoDispatcher.prototype.deleteSineLfo = function deleteSineLfo(m) {
+	this.removeModule(m);
+	// TODO: Delete?
+};

@@ -15,13 +15,12 @@ edm.ready(function () {
 	// INIT
 	//
 
-	var myDispatcher = new PkoDispatcher();
 
 	var myScene = new PkoScene('canvas');
+	var myDispatcher = new PkoDispatcher(myScene);
 	var myGestureTracker = new GestureTracker(myScene);
 
-	var myBg = new PkoShape({
-		scene: myScene,
+	myDispatcher.newShape({
 		params: {
 			width: 2000,
 			height: 2000,
@@ -29,18 +28,18 @@ edm.ready(function () {
 		}
 	});
 
-	var my2Lfo = new PkoSineLfo({
+	my2Lfo = myDispatcher.newSineLfo({
 		params: {
 			freq: 0.5
 		}
 	});
-	var my3Lfo = new PkoPulseLfo({
+	var my3Lfo = myDispatcher.newPulseLfo({
 		params: {
 			amp: 1,
 			freq: 1.1
 		}
 	});
-	var myFilter = new PkoSmoothingFilter({
+	var myFilter = myDispatcher.newSmoothingFilter({
 		params: {
 			strength: 0.6
 		},
@@ -48,17 +47,16 @@ edm.ready(function () {
 			source: function() { return my3Lfo.outputs.signal(); }
 		}
 	});
-	var myLfo = new PkoSineLfo({
+	var myLfo = myDispatcher.newSineLfo({
 		inputs: {
 			freq: function() { return 1.1 + my2Lfo.outputs.signal(); }
 		}
 	});
-
-	var myShape = new PkoShape({
-		scene: myScene,
+	myDispatcher.newShape({
 		params: {
 			x: 300,
 			y: 400,
+			z: 10,
 			width: 100,
 			height: 100,
 			fill: '#cba'
@@ -67,11 +65,12 @@ edm.ready(function () {
 			r: function() { return Math.PI / 4 + 0.5*myLfo.outputs.signal(); }
 		}
 	});
-	var myShape2 = new PkoShape({
+	myDispatcher.newShape({
 		scene: myScene,
 		params: {
 			x: 330,
 			y: 430,
+			z: 4,
 			width: 100,
 			height: 100,
 			fill: '#567'
@@ -81,25 +80,8 @@ edm.ready(function () {
 		}
 	});
 
-	myDispatcher.addModule(myBg);
-	myDispatcher.addModule(myLfo);
-	myDispatcher.addModule(my2Lfo);
-	myDispatcher.addModule(my3Lfo);
-	myDispatcher.addModule(myShape);
-	myDispatcher.addModule(myShape2);
-	myDispatcher.addModule(myFilter);
-	myDispatcher.addCallback(myScene.draw);
-
-	myScene.addToDrawList(myBg, 0);
-	myScene.addToDrawList(myShape, 10);
-	myScene.addToDrawList(myShape2, 50);
-
-
 	// globals for debugging
 	sc = myScene;
-	sh = myShape;
-	lfo = myLfo;
-	l2 = my2Lfo;
 	dis = myDispatcher;
 
 	// myDispatcher.update(); return; // run once and stop for debugging
