@@ -18,4 +18,6 @@ Particle systems: "conditions", e.g. gravity, boundaries - given pos/vel, functi
 Torus - watch out for velocity calcs
 
 
+!! TO TRY
 
+"Immediate" modules that go first, or a "defer" boolean, or an integer list like drawList

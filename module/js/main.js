@@ -4,7 +4,7 @@ edm.ready(function () {
 	// MAIN LOOP
 	//
 
-	var update = function () {
+	var update = function update() {
 		myBg.draw();
 		myShape.draw();
 	};
@@ -34,9 +34,23 @@ edm.ready(function () {
 			freq: 0.5
 		}
 	});
+	var my3Lfo = new PkoPulseLfo({
+		params: {
+			amp: 1,
+			freq: 1.1
+		}
+	});
+	var myFilter = new PkoSmoothingFilter({
+		params: {
+			strength: 0.6
+		},
+		inputs: {
+			source: function() { return my3Lfo.outputs.signal(); }
+		}
+	});
 	var myLfo = new PkoSineLfo({
 		inputs: {
-			freq: function () { return 1.1 + my2Lfo.outputs.signal(); }
+			freq: function() { return 1.1 + my2Lfo.outputs.signal(); }
 		}
 	});
 
@@ -50,7 +64,7 @@ edm.ready(function () {
 			fill: '#cba'
 		},
 		inputs: {
-			r: function () { return Math.PI / 4 + 0.5*myLfo.outputs.signal(); }
+			r: function() { return Math.PI / 4 + 0.5*myLfo.outputs.signal(); }
 		}
 	});
 	var myShape2 = new PkoShape({
@@ -63,15 +77,17 @@ edm.ready(function () {
 			fill: '#567'
 		},
 		inputs: {
-			r: function () { return Math.PI / 4 - myLfo.outputs.signal(); }
+			r: function() { return Math.PI / 4 - myFilter.outputs.signal(); }
 		}
 	});
 
 	myDispatcher.addModule(myBg);
 	myDispatcher.addModule(myLfo);
 	myDispatcher.addModule(my2Lfo);
+	myDispatcher.addModule(my3Lfo);
 	myDispatcher.addModule(myShape);
 	myDispatcher.addModule(myShape2);
+	myDispatcher.addModule(myFilter);
 	myDispatcher.addCallback(myScene.draw);
 
 	myScene.addToDrawList(myBg, 0);
@@ -85,8 +101,6 @@ edm.ready(function () {
 	lfo = myLfo;
 	l2 = my2Lfo;
 	dis = myDispatcher;
-
-	console.log(myDispatcher);
 
 	// myDispatcher.update(); return; // run once and stop for debugging
 	myDispatcher.start();
