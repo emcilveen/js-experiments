@@ -63,7 +63,7 @@ var edm = (function () {
 		},
 
 		hexToRgb: function (string) {
-			var string = string.replace('#', '');
+			string = string.replace('#', '');
 
 			var r=0, g=0, b=0;
 
@@ -87,7 +87,7 @@ var edm = (function () {
 			var r = Math.max(0, Math.min(255, Math.floor(color.r)));
 			var g = Math.max(0, Math.min(255, Math.floor(color.g)));
 			var b = Math.max(0, Math.min(255, Math.floor(color.b)));
-			return ("0"+r.toString(16)).slice(-2) + ("0"+g.toString(16)).slice(-2) + ("0"+b.toString(16)).slice(-2);
+			return "#" + ("0"+r.toString(16)).slice(-2) + ("0"+g.toString(16)).slice(-2) + ("0"+b.toString(16)).slice(-2);
 		},
 
 		sample: function () {
